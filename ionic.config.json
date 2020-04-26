@@ -1,5 +1,7 @@
 {
   "name": "prueba-github-actions",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

@@ -33,16 +33,10 @@ jobs:
         run: ionic cordova platform add android@latest
 
       - name: Build Android Dev APK
-        run: ionic cordova build android
+        run: ionic cordova build android --no-confirm=yes --debug
 
-      - name: Build Android Release APK
-        run: ionic cordova build android
-
-      - name: Prueba
-        run: echo Prueba
-
-      # - name: Upload dev APK
-      #   uses: actions/upload-artifact@v1
-      #   with:
-      #     name: app-dev
-      #     path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload dev APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: app-dev
+          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk

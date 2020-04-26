@@ -1,41 +1,41 @@
-name: Build Android
+name: Generar APK Android
 
 on: [push, pull_request]
 
 jobs:
   build:
-    name: Build APK
+    name: Generar APK
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
+      - name: Obtener código del repositorio
         uses: actions/checkout@v2
 
-      - name: Setup java
+      - name: Preparar Java
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
 
-      - name: Setup Node.js
+      - name: Preparar Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 13.x
 
-      - name: Install Cordova
+      - name: Instalar Cordova
         run: npm install -g cordova
 
-      - name: Install Ionic
+      - name: Instalar Ionic
         run: npm install -g @ionic/cli
 
-      - name: Install app dependencies
+      - name: Instalar dependencias de la aplicación
         run: npm install
 
-      - name: Add Android platform
+      - name: Añadir plataforma Android
         run: ionic cordova platform add android@latest
 
-      - name: Build Android Dev APK
-        run: ionic cordova build android --no-confirm=yes --debug
+      - name: Generar APK de desarrollo
+        run: ionic cordova build android --no-confirm=yes --debug --prod
 
-      - name: Upload dev APK
+      - name: Subir APK generada a Github
         uses: actions/upload-artifact@v1
         with:
           name: app-dev

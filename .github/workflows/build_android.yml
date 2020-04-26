@@ -3,7 +3,7 @@ name: Build Android
 on: [push, pull_request]
 
 jobs:
-  build_apk:
+  build:
     name: Build APK
     runs-on: ubuntu-latest
     steps:
@@ -38,13 +38,11 @@ jobs:
       - name: Build Android Release APK
         run: ionic cordova build android
 
-  upload_apk:
-    name: Upload APK
-    runs-on: ubuntu-latest
-    needs: [build_apk]
-    steps:
-      - name: Upload dev APK
-        uses: actions/upload-artifact@v1
-        with:
-          name: app-dev
-          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Prueba
+        run: echo Prueba
+
+      # - name: Upload dev APK
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: app-dev
+      #     path: platforms/android/app/build/outputs/apk/debug/app-debug.apk

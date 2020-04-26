@@ -4,17 +4,20 @@ on: push
 
 jobs:
   build:
-    name: Build APK
+    name: Generar APK de producción
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
+      - name: Obtener código de este repositorio
         uses: actions/checkout@v2
 
-      - name: Use coturiv/setup-ionic
+      - name: Instalar @angular/cli
+        run: npm install @angular/cli
+
+      - name: Usar coturiv/setup-ionic
         uses: coturiv/setup-ionic@v1
         with:
           cordova-version: 8
 
-      - name: Build
+      - name: Generar APK
         run: |
           ionic cordova build android --prod

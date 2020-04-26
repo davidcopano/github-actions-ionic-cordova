@@ -7,6 +7,9 @@ jobs:
     name: Build APK
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+
       - name: Use coturiv/setup-ionic
         uses: coturiv/setup-ionic@v1
         with:

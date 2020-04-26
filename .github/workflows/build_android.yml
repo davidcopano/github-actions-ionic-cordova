@@ -1,0 +1,17 @@
+name: Build Android
+
+on: push
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use coturiv/setup-ionic
+        uses: coturiv/setup-ionic@v1
+        with:
+          cordova-version: 8
+
+      - name: Build
+        run: |
+          ionic cordova build android --prod

@@ -1,4 +1,4 @@
-name: Generar APK Android
+name: Generar APK de desarrollo Android
 
 on: [push, pull_request]
 

@@ -1,0 +1,74 @@
+# Esta acción se ejecutará cuando se cree un tag y se suba
+# Mas información: https://github.com/davidcopano/github-actions-docs
+
+name: Generar APK de producción Android
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    name: Generar APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener código del repositorio
+        uses: actions/checkout@v2
+
+      - name: Preparar Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 13.x
+
+      - name: Instalar Cordova
+        run: npm install -g cordova
+
+      - name: Instalar Ionic
+        run: npm install -g @ionic/cli
+
+      - name: Instalar dependencias de la aplicación
+        run: npm install
+
+      - name: Añadir plataforma Android
+        run: ionic cordova platform add android@latest
+
+      - name: Generar APK de producción
+        run: ionic cordova build android --no-confirm=yes --release --prod
+
+      # IMPORTANTE: Para firmar el APK, se debe añadir estos secrets en el apartado Settings -> Secrets del repo en Github
+      # Más información: https://github.com/r0adkll/sign-android-release
+
+      - name: Firmar APK
+        id: sign_app
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: platforms/android/app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "29.0.2"
+
+      - name: Renombrar APK firmada
+        run: mv platforms/android/app/build/outputs/apk/release/app-release-unsigned-signed.apk platforms/android/app/build/outputs/apk/release/app-release-signed.apk
+
+      - name: Subir APK generada y firmada como artefacto a Github
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release
+          path: platforms/android/app/build/outputs/apk/release/app-release-signed.apk
+
+      - name: Generar release a Github
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: platforms/android/app/build/outputs/apk/release/app-release-signed.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

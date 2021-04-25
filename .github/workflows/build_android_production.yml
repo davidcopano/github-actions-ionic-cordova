@@ -1,7 +1,7 @@
-# Esta acción se ejecutará cuando se cree un tag y se suba
-# Mas información: https://github.com/davidcopano/github-actions-docs
+# This action will be executed when a tag is created and uploaded.
+# More information: https://github.com/davidcopano/github-actions-docs
 
-name: Generar APK de producción Android
+name: Generate Android Production APK
 
 on:
   push:
@@ -10,39 +10,39 @@ on:
 
 jobs:
   build:
-    name: Generar APK
+    name: Generate APK
     runs-on: ubuntu-latest
     steps:
-      - name: Obtener código del repositorio
+      - name: Get code from current repository
         uses: actions/checkout@v2
 
-      - name: Preparar Java
+      - name: Install Java
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
 
-      - name: Preparar Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 13.x
 
-      - name: Instalar Cordova
+      - name: Install Cordova
         run: npm install -g cordova
 
-      - name: Instalar Ionic
+      - name: Install Ionic
         run: npm install -g @ionic/cli
 
-      - name: Instalar dependencias de la aplicación
+      - name: Install app dependencies
         run: npm install
 
-      - name: Añadir plataforma Android
+      - name: Add Android platform
         run: ionic cordova platform add android@latest
 
-      - name: Generar APK de producción
+      - name: Generate production APK
         run: ionic cordova build android --no-confirm=yes --release --prod
 
-      # IMPORTANTE: Para firmar el APK, se debe añadir estos secrets en el apartado Settings -> Secrets del repo en Github
-      # Más información: https://github.com/r0adkll/sign-android-release
+      # IMPORTANT: To sign the APK, you must add these secrets in the Settings -> Secrets section of the Github repo.
+      # More info: https://github.com/r0adkll/sign-android-release
 
       - name: Firmar APK
         id: sign_app
@@ -56,16 +56,16 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "29.0.2"
 
-      - name: Renombrar APK firmada
+      - name: Rename signed APK
         run: mv platforms/android/app/build/outputs/apk/release/app-release-unsigned-signed.apk platforms/android/app/build/outputs/apk/release/app-release-signed.apk
 
-      - name: Subir APK generada y firmada como artefacto a Github
+      - name: Upload generated and signed APK as artifact to Github
         uses: actions/upload-artifact@v2
         with:
           name: app-release
           path: platforms/android/app/build/outputs/apk/release/app-release-signed.apk
 
-      - name: Generar release a Github
+      - name: Generate release to Github
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
